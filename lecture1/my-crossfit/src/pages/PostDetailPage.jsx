@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   Container, Box, Typography, Paper, Divider, Button,
-  TextField, Avatar, IconButton, Chip, CircularProgress
+  TextField, Avatar, IconButton, Chip, CircularProgress,
+  useMediaQuery, useTheme,
 } from '@mui/material';
 import {
   FavoriteRounded, FavoriteBorderRounded,
   VisibilityRounded, CommentRounded, ArrowBackRounded,
-  DeleteRounded, SendRounded
+  DeleteRounded, SendRounded,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -16,6 +17,9 @@ const PostDetailPage = () => {
   const { id } = useParams();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState(0);
@@ -123,7 +127,7 @@ const PostDetailPage = () => {
 
   if (!post) {
     return (
-      <Container maxWidth="md" sx={{ py: 4 }}>
+      <Container maxWidth="md" sx={{ py: 4, px: { xs: 2, sm: 3 } }}>
         <Typography color="error">게시글을 찾을 수 없습니다.</Typography>
         <Button onClick={() => navigate('/posts')} startIcon={<ArrowBackRounded />} sx={{ mt: 2 }}>
           목록으로
@@ -133,65 +137,110 @@ const PostDetailPage = () => {
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container maxWidth="md" sx={{ py: { xs: 2, sm: 4 }, px: { xs: 2, sm: 3 } }}>
       <Button
         startIcon={<ArrowBackRounded />}
         onClick={() => navigate('/posts')}
-        sx={{ mb: 3, color: 'text.secondary' }}
+        sx={{ mb: { xs: 2, sm: 3 }, color: 'text.secondary', pl: 0 }}
       >
-        목록으로 돌아가기
+        목록으로
       </Button>
 
       {/* 게시글 본문 */}
-      <Paper sx={{ p: 4, border: '1px solid', borderColor: 'divider', mb: 3 }}>
-        <Typography variant="h5" fontWeight={700} mb={2.5}>{post.title}</Typography>
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 2.5, sm: 4 },
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2,
+          mb: { xs: 2, sm: 3 },
+        }}
+      >
+        {/* 제목 */}
+        <Typography
+          variant="h5"
+          fontWeight={700}
+          mb={2.5}
+          sx={{ fontSize: { xs: '1.15rem', sm: '1.5rem' }, lineHeight: 1.4 }}
+        >
+          {post.title}
+        </Typography>
 
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        {/* 작성자 정보 + 통계 */}
+        <Box
+          display="flex"
+          flexDirection={{ xs: 'column', sm: 'row' }}
+          justifyContent="space-between"
+          alignItems={{ xs: 'flex-start', sm: 'center' }}
+          gap={1.5}
+          mb={3}
+        >
           <Box display="flex" gap={1.5} alignItems="center">
-            <Avatar sx={{ width: 36, height: 36, bgcolor: 'primary.main', fontSize: '0.85rem', color: '#000' }}>
+            <Avatar
+              sx={{
+                width: 36, height: 36,
+                bgcolor: 'primary.main',
+                fontSize: '0.85rem',
+                color: '#000',
+                fontWeight: 700,
+              }}
+            >
               {post.profiles?.name?.[0]?.toUpperCase()}
             </Avatar>
             <Box>
-              <Typography variant="body2" fontWeight={600}>{post.profiles?.name}</Typography>
+              <Typography variant="body2" fontWeight={700}>{post.profiles?.name}</Typography>
               <Typography variant="caption" color="text.secondary">{formatDate(post.created_at)}</Typography>
             </Box>
           </Box>
 
           <Box display="flex" gap={2} alignItems="center">
             <Box display="flex" alignItems="center" gap={0.5}>
-              <VisibilityRounded sx={{ fontSize: 15, color: 'text.secondary' }} />
+              <VisibilityRounded sx={{ fontSize: 14, color: 'text.secondary' }} />
               <Typography variant="caption" color="text.secondary">{post.view_count}</Typography>
             </Box>
             <Box display="flex" alignItems="center" gap={0.5}>
-              <CommentRounded sx={{ fontSize: 15, color: 'text.secondary' }} />
+              <CommentRounded sx={{ fontSize: 14, color: 'text.secondary' }} />
               <Typography variant="caption" color="text.secondary">{comments.length}</Typography>
             </Box>
             {post.author_id === user?.id && (
-              <IconButton size="small" onClick={handleDeletePost} sx={{ color: 'error.main' }}>
-                <DeleteRounded fontSize="small" />
+              <IconButton
+                size="small"
+                onClick={handleDeletePost}
+                sx={{ color: 'error.main', p: 0.5 }}
+              >
+                <DeleteRounded sx={{ fontSize: 18 }} />
               </IconButton>
             )}
           </Box>
         </Box>
 
-        <Divider sx={{ mb: 3 }} />
+        <Divider />
 
+        {/* 본문 내용 */}
         <Typography
           variant="body1"
-          sx={{ lineHeight: 1.9, whiteSpace: 'pre-wrap', minHeight: 120 }}
+          sx={{
+            lineHeight: 1.9,
+            whiteSpace: 'pre-wrap',
+            minHeight: 120,
+            py: 3,
+            fontSize: { xs: '0.92rem', sm: '1rem' },
+          }}
         >
           {post.content}
         </Typography>
 
-        <Divider sx={{ mt: 3, mb: 2.5 }} />
+        <Divider />
 
-        <Box display="flex" justifyContent="center">
+        {/* 좋아요 버튼 */}
+        <Box display="flex" justifyContent="center" pt={3}>
           <Button
             variant={liked ? 'contained' : 'outlined'}
             color="primary"
             startIcon={liked ? <FavoriteRounded /> : <FavoriteBorderRounded />}
             onClick={handleLike}
-            sx={{ px: 5, py: 1 }}
+            sx={{ px: { xs: 4, sm: 6 }, py: 1, fontWeight: 700 }}
           >
             좋아요 {likes}
           </Button>
@@ -199,38 +248,63 @@ const PostDetailPage = () => {
       </Paper>
 
       {/* 댓글 목록 */}
-      <Paper sx={{ p: 4, border: '1px solid', borderColor: 'divider', mb: 3 }}>
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 2.5, sm: 4 },
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2,
+          mb: { xs: 2, sm: 3 },
+        }}
+      >
         <Box display="flex" alignItems="center" gap={1.5} mb={3}>
-          <Typography variant="h6" fontWeight={700}>댓글</Typography>
-          <Chip
-            label={comments.length}
-            color="primary"
-            size="small"
-            sx={{ fontWeight: 700 }}
-          />
+          <Typography variant="h6" fontWeight={700} sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
+            댓글
+          </Typography>
+          <Chip label={comments.length} color="primary" size="small" sx={{ fontWeight: 700, height: 22 }} />
         </Box>
 
         {comments.length === 0 ? (
-          <Typography color="text.secondary" textAlign="center" py={3}>
+          <Typography color="text.secondary" textAlign="center" py={4} variant="body2">
             첫 댓글을 남겨보세요!
           </Typography>
         ) : (
-          <Box display="flex" flexDirection="column" gap={0}>
+          <Box>
             {comments.map((comment, idx) => (
               <Box key={comment.id}>
-                <Box display="flex" justifyContent="space-between" alignItems="flex-start" py={2}>
-                  <Box display="flex" gap={1.5} alignItems="flex-start" flex={1}>
-                    <Avatar sx={{ width: 30, height: 30, bgcolor: 'primary.dark', fontSize: '0.75rem', color: '#000' }}>
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="flex-start"
+                  py={2.5}
+                >
+                  <Box display="flex" gap={1.5} alignItems="flex-start" flex={1} minWidth={0}>
+                    <Avatar
+                      sx={{
+                        width: 30, height: 30,
+                        bgcolor: 'primary.dark',
+                        fontSize: '0.72rem',
+                        color: '#000',
+                        fontWeight: 700,
+                        flexShrink: 0,
+                      }}
+                    >
                       {comment.profiles?.name?.[0]?.toUpperCase()}
                     </Avatar>
-                    <Box flex={1}>
-                      <Box display="flex" gap={1.5} alignItems="center" mb={0.5}>
-                        <Typography variant="body2" fontWeight={600}>{comment.profiles?.name}</Typography>
+                    <Box flex={1} minWidth={0}>
+                      <Box display="flex" flexWrap="wrap" gap={1} alignItems="center" mb={0.75}>
+                        <Typography variant="body2" fontWeight={700}>
+                          {comment.profiles?.name}
+                        </Typography>
                         <Typography variant="caption" color="text.secondary">
                           {formatDate(comment.created_at)}
                         </Typography>
                       </Box>
-                      <Typography variant="body2" sx={{ lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ lineHeight: 1.7, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: { xs: '0.85rem', sm: '0.875rem' } }}
+                      >
                         {comment.content}
                       </Typography>
                     </Box>
@@ -239,7 +313,7 @@ const PostDetailPage = () => {
                     <IconButton
                       size="small"
                       onClick={() => handleDeleteComment(comment.id)}
-                      sx={{ color: 'text.secondary', ml: 1 }}
+                      sx={{ color: 'text.secondary', ml: 1, flexShrink: 0, p: 0.5 }}
                     >
                       <DeleteRounded sx={{ fontSize: 15 }} />
                     </IconButton>
@@ -253,14 +327,38 @@ const PostDetailPage = () => {
       </Paper>
 
       {/* 댓글 작성 */}
-      <Paper sx={{ p: 3, border: '1px solid', borderColor: 'divider' }}>
-        <Typography variant="subtitle2" fontWeight={600} mb={2}>댓글 작성</Typography>
-        <Box component="form" onSubmit={handleAddComment} display="flex" gap={2} alignItems="flex-start">
-          <Avatar
-            sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.8rem', color: '#000', mt: 0.5, flexShrink: 0 }}
-          >
-            {(profile?.name?.[0] || user?.email?.[0])?.toUpperCase()}
-          </Avatar>
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 2.5, sm: 3 },
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 2,
+        }}
+      >
+        <Typography variant="subtitle2" fontWeight={700} mb={2}>댓글 작성</Typography>
+        <Box
+          component="form"
+          onSubmit={handleAddComment}
+          display="flex"
+          gap={{ xs: 1.5, sm: 2 }}
+          alignItems="flex-start"
+        >
+          {!isMobile && (
+            <Avatar
+              sx={{
+                width: 32, height: 32,
+                bgcolor: 'primary.main',
+                fontSize: '0.8rem',
+                color: '#000',
+                fontWeight: 700,
+                mt: 0.5,
+                flexShrink: 0,
+              }}
+            >
+              {(profile?.name?.[0] || user?.email?.[0])?.toUpperCase()}
+            </Avatar>
+          )}
           <TextField
             value={commentText}
             onChange={e => setCommentText(e.target.value)}
@@ -275,10 +373,10 @@ const PostDetailPage = () => {
             variant="contained"
             color="primary"
             disabled={!commentText.trim() || submitting}
-            sx={{ mt: 0.5, minWidth: 80, flexShrink: 0 }}
-            endIcon={<SendRounded />}
+            sx={{ mt: 0.5, minWidth: { xs: 60, sm: 80 }, flexShrink: 0, fontWeight: 700 }}
+            endIcon={!isMobile ? <SendRounded /> : undefined}
           >
-            등록
+            {isMobile ? <SendRounded fontSize="small" /> : '등록'}
           </Button>
         </Box>
       </Paper>

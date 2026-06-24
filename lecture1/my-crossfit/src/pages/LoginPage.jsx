@@ -52,43 +52,67 @@ const LoginPage = () => {
       sx={{
         minHeight: '100vh',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #0d0d0d 0%, #111111 50%, #0d1a0d 100%)',
+        background: 'radial-gradient(ellipse at top, #0d1a0d 0%, #0d0d0d 60%)',
+        px: 2,
+        py: 4,
       }}
     >
-      <Container maxWidth="xs">
-        <Box textAlign="center" mb={4}>
-          <Box display="flex" alignItems="center" justifyContent="center" gap={1.5} mb={1}>
-            <FitnessCenterRounded sx={{ color: 'primary.main', fontSize: 40 }} />
-            <Typography variant="h4" fontWeight={900} color="primary" letterSpacing={2}>
-              CROSSFIT
-            </Typography>
-          </Box>
-          <Typography variant="h6" fontWeight={700} color="text.primary" letterSpacing={4}>
-            GROUND
-          </Typography>
-          <Typography variant="body2" color="text.secondary" mt={1}>
-            크로스핏 커뮤니티에 오신 것을 환영합니다
+      {/* 로고 */}
+      <Box textAlign="center" mb={4}>
+        <Box display="flex" alignItems="center" justifyContent="center" gap={1.5} mb={1}>
+          <FitnessCenterRounded sx={{ color: 'primary.main', fontSize: { xs: 32, sm: 40 } }} />
+          <Typography
+            fontWeight={900}
+            color="primary"
+            letterSpacing={3}
+            sx={{ fontSize: { xs: '1.6rem', sm: '2rem' } }}
+          >
+            CROSSFIT
           </Typography>
         </Box>
+        <Typography
+          fontWeight={800}
+          color="text.primary"
+          letterSpacing={6}
+          sx={{ fontSize: { xs: '0.85rem', sm: '1rem' } }}
+        >
+          GROUND
+        </Typography>
+        <Typography variant="body2" color="text.secondary" mt={1.5}>
+          크로스핏 커뮤니티에 오신 것을 환영합니다
+        </Typography>
+      </Box>
 
+      {/* 폼 카드 */}
+      <Box sx={{ width: '100%', maxWidth: 420 }}>
         <Paper
           elevation={0}
-          sx={{ p: 4, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}
+          sx={{
+            p: { xs: 3, sm: 4 },
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 3,
+            bgcolor: 'background.paper',
+          }}
         >
           <Tabs
             value={tab}
             onChange={(_, v) => { setTab(v); setError(''); }}
             variant="fullWidth"
-            sx={{ mb: 3 }}
+            sx={{
+              mb: 3,
+              '& .MuiTab-root': { fontSize: '0.9rem', py: 1.5 },
+            }}
           >
             <Tab label="로그인" />
             <Tab label="회원가입" />
           </Tabs>
 
           {tab === 0 ? (
-            <Box component="form" onSubmit={handleLogin} display="flex" flexDirection="column" gap={2}>
+            <Box component="form" onSubmit={handleLogin} display="flex" flexDirection="column" gap={2.5}>
               <TextField
                 name="email"
                 label="이메일"
@@ -97,7 +121,7 @@ const LoginPage = () => {
                 onChange={handleChange}
                 required
                 fullWidth
-                size="small"
+                autoComplete="email"
               />
               <TextField
                 name="password"
@@ -107,12 +131,23 @@ const LoginPage = () => {
                 onChange={handleChange}
                 required
                 fullWidth
-                size="small"
+                autoComplete="current-password"
               />
               {error && (
-                <Typography color="error" variant="body2" fontWeight={500}>
-                  {error}
-                </Typography>
+                <Box
+                  sx={{
+                    bgcolor: 'rgba(244, 67, 54, 0.08)',
+                    border: '1px solid',
+                    borderColor: 'error.main',
+                    borderRadius: 1.5,
+                    px: 2,
+                    py: 1.2,
+                  }}
+                >
+                  <Typography color="error" variant="body2" fontWeight={500}>
+                    {error}
+                  </Typography>
+                </Box>
               )}
               <Button
                 type="submit"
@@ -121,13 +156,13 @@ const LoginPage = () => {
                 fullWidth
                 size="large"
                 disabled={loading}
-                sx={{ mt: 1 }}
+                sx={{ mt: 0.5, py: 1.4, fontSize: '1rem', fontWeight: 700 }}
               >
                 {loading ? '로그인 중...' : '로그인'}
               </Button>
             </Box>
           ) : (
-            <Box component="form" onSubmit={handleRegister} display="flex" flexDirection="column" gap={2}>
+            <Box component="form" onSubmit={handleRegister} display="flex" flexDirection="column" gap={2.5}>
               <TextField
                 name="name"
                 label="이름"
@@ -135,7 +170,7 @@ const LoginPage = () => {
                 onChange={handleChange}
                 required
                 fullWidth
-                size="small"
+                autoComplete="name"
               />
               <TextField
                 name="email"
@@ -145,7 +180,7 @@ const LoginPage = () => {
                 onChange={handleChange}
                 required
                 fullWidth
-                size="small"
+                autoComplete="email"
               />
               <TextField
                 name="phone"
@@ -153,8 +188,8 @@ const LoginPage = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 fullWidth
-                size="small"
                 placeholder="010-0000-0000"
+                autoComplete="tel"
               />
               <TextField
                 name="password"
@@ -164,12 +199,23 @@ const LoginPage = () => {
                 onChange={handleChange}
                 required
                 fullWidth
-                size="small"
+                autoComplete="new-password"
               />
               {error && (
-                <Typography color="error" variant="body2" fontWeight={500}>
-                  {error}
-                </Typography>
+                <Box
+                  sx={{
+                    bgcolor: 'rgba(244, 67, 54, 0.08)',
+                    border: '1px solid',
+                    borderColor: 'error.main',
+                    borderRadius: 1.5,
+                    px: 2,
+                    py: 1.2,
+                  }}
+                >
+                  <Typography color="error" variant="body2" fontWeight={500}>
+                    {error}
+                  </Typography>
+                </Box>
               )}
               <Button
                 type="submit"
@@ -178,14 +224,14 @@ const LoginPage = () => {
                 fullWidth
                 size="large"
                 disabled={loading}
-                sx={{ mt: 1 }}
+                sx={{ mt: 0.5, py: 1.4, fontSize: '1rem', fontWeight: 700 }}
               >
                 {loading ? '가입 중...' : '회원가입'}
               </Button>
             </Box>
           )}
         </Paper>
-      </Container>
+      </Box>
     </Box>
   );
 };
