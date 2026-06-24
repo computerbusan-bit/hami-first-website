@@ -54,24 +54,32 @@ const PostListPage = () => {
   return (
     <Box
       sx={{
-        maxWidth: 900,
+        maxWidth: 960,
         mx: 'auto',
-        px: { xs: 2, sm: 3, md: 4 },
-        py: { xs: 3, sm: 5 },
+        px: { xs: 2, sm: 3 },
+        pt: { xs: 3, sm: 5 },
+        pb: { xs: 5, sm: 8 },
         minHeight: 'calc(100vh - 64px)',
       }}
     >
       {/* 헤더 */}
-      <Box display="flex" justifyContent="space-between" alignItems="flex-end" mb={{ xs: 3, sm: 4 }}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={{ xs: 2.5, sm: 3.5 }}
+        pb={{ xs: 2.5, sm: 3 }}
+        sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
+      >
         <Box>
           <Typography
             variant="h5"
             fontWeight={700}
-            sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' }, mb: 0.5 }}
+            sx={{ fontSize: { xs: '1.15rem', sm: '1.35rem' }, mb: 0.4 }}
           >
             커뮤니티 게시판
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.82rem' }}>
             총 {totalCount}개의 게시글
           </Typography>
         </Box>
@@ -80,9 +88,9 @@ const PostListPage = () => {
           color="primary"
           startIcon={<AddRounded />}
           onClick={() => navigate('/posts/write')}
-          sx={{ fontWeight: 700, px: { xs: 2, sm: 2.5 }, py: 1, fontSize: '0.88rem' }}
+          sx={{ fontWeight: 700, px: 2.5, py: 1, fontSize: '0.88rem', flexShrink: 0 }}
         >
-          {isMobile ? '글쓰기' : '새 글 작성'}
+          글쓰기
         </Button>
       </Box>
 

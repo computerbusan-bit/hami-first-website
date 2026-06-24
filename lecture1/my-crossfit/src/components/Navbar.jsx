@@ -32,135 +32,92 @@ const Navbar = () => {
         zIndex: 1100,
       }}
     >
-      <Toolbar
-        sx={{
-          maxWidth: 1200,
-          width: '100%',
-          mx: 'auto',
-          px: { xs: 2, sm: 3, md: 4 },
-          minHeight: { xs: 56, sm: 64 },
-        }}
-      >
-        {/* 로고 */}
+      <Toolbar disableGutters sx={{ minHeight: { xs: 56, sm: 64 } }}>
         <Box
-          display="flex" alignItems="center" gap={1}
-          sx={{ cursor: 'pointer', userSelect: 'none' }}
-          onClick={() => navigate('/posts')}
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{
+            width: '100%',
+            maxWidth: 960,
+            mx: 'auto',
+            px: { xs: 2, sm: 3 },
+          }}
         >
-          <FitnessCenterRounded
-            sx={{ color: 'primary.main', fontSize: { xs: 20, sm: 24 } }}
-          />
-          <Typography
-            fontWeight={900}
-            color="primary"
-            sx={{
-              fontSize: { xs: '0.9rem', sm: '1.05rem' },
-              letterSpacing: { xs: 1, sm: 2 },
-              lineHeight: 1,
-            }}
+          {/* 로고 */}
+          <Box
+            display="flex" alignItems="center" gap={1}
+            sx={{ cursor: 'pointer', userSelect: 'none' }}
+            onClick={() => navigate('/posts')}
           >
-            CROSSFIT GROUND
-          </Typography>
-        </Box>
-
-        <Box flex={1} />
-
-        <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 1.5 }}>
-          {!isMobile && (
-            <Button
-              onClick={() => navigate('/posts')}
-              sx={{ color: 'text.secondary', fontWeight: 500, px: 1.5 }}
+            <FitnessCenterRounded sx={{ color: 'primary.main', fontSize: { xs: 20, sm: 22 } }} />
+            <Typography
+              fontWeight={900}
+              color="primary"
+              sx={{ fontSize: { xs: '0.88rem', sm: '1rem' }, letterSpacing: { xs: 1, sm: 2 }, lineHeight: 1 }}
             >
-              게시판
+              CROSSFIT GROUND
+            </Typography>
+          </Box>
+
+          {/* 우측 메뉴 */}
+          <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 1.5 }}>
+            {!isMobile && (
+              <Button onClick={() => navigate('/posts')} sx={{ color: 'text.secondary', fontWeight: 500 }}>
+                게시판
+              </Button>
+            )}
+
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => navigate('/posts/write')}
+              sx={{ fontWeight: 700, px: { xs: 1.5, sm: 2 }, py: 0.75, minWidth: 0, fontSize: '0.82rem' }}
+            >
+              {isMobile ? <EditRounded sx={{ fontSize: 18 }} /> : '+ 글쓰기'}
             </Button>
-          )}
 
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            onClick={() => navigate('/posts/write')}
-            sx={{
-              fontWeight: 700,
-              px: { xs: 1.5, sm: 2 },
-              py: 0.75,
-              minWidth: 0,
-              fontSize: '0.82rem',
-            }}
-          >
-            {isMobile ? <EditRounded sx={{ fontSize: 18 }} /> : '+ 글쓰기'}
-          </Button>
-
-          {user && (
-            <>
-              <Box
-                display="flex" alignItems="center" gap={0.75}
-                sx={{ cursor: 'pointer', pl: 0.5 }}
-                onClick={e => setAnchorEl(e.currentTarget)}
-              >
-                <Avatar
-                  sx={{
-                    width: { xs: 28, sm: 32 },
-                    height: { xs: 28, sm: 32 },
-                    bgcolor: 'primary.main',
-                    color: '#000',
-                    fontSize: '0.78rem',
-                    fontWeight: 800,
-                  }}
+            {user && (
+              <>
+                <Box
+                  display="flex" alignItems="center" gap={0.75}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={e => setAnchorEl(e.currentTarget)}
                 >
-                  {(profile?.name?.[0] || user.email?.[0])?.toUpperCase()}
-                </Avatar>
-                {!isMobile && (
-                  <Box display="flex" alignItems="center" gap={0.25}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        maxWidth: 88,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        fontSize: '0.85rem',
-                        color: 'text.secondary',
-                      }}
-                    >
+                  <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: 'primary.main', color: '#000', fontSize: '0.78rem', fontWeight: 800 }}>
+                    {(profile?.name?.[0] || user.email?.[0])?.toUpperCase()}
+                  </Avatar>
+                  {!isMobile && (
+                    <Box display="flex" alignItems="center" gap={0.25}>
+                      <Typography variant="body2" sx={{ maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.85rem', color: 'text.secondary' }}>
+                        {profile?.name || user.email}
+                      </Typography>
+                      <ExpandMoreRounded sx={{ fontSize: 14, color: 'text.secondary' }} />
+                    </Box>
+                  )}
+                </Box>
+
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={() => setAnchorEl(null)}
+                  PaperProps={{ elevation: 0, sx: { mt: 1.5, minWidth: 140, border: '1px solid', borderColor: 'divider', borderRadius: 2 } }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  {isMobile && (
+                    <MenuItem disabled sx={{ fontSize: '0.8rem', opacity: 0.6 }}>
                       {profile?.name || user.email}
-                    </Typography>
-                    <ExpandMoreRounded sx={{ fontSize: 14, color: 'text.secondary' }} />
-                  </Box>
-                )}
-              </Box>
-
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={() => setAnchorEl(null)}
-                PaperProps={{
-                  elevation: 0,
-                  sx: {
-                    mt: 1.5,
-                    minWidth: 150,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: 2,
-                  },
-                }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              >
-                {isMobile && (
-                  <MenuItem disabled sx={{ fontSize: '0.8rem', opacity: 0.6 }}>
-                    {profile?.name || user.email}
+                    </MenuItem>
+                  )}
+                  <MenuItem onClick={handleLogout} sx={{ color: 'error.main', fontSize: '0.88rem', py: 1.25 }}>
+                    로그아웃
                   </MenuItem>
-                )}
-                <MenuItem
-                  onClick={handleLogout}
-                  sx={{ color: 'error.main', fontSize: '0.88rem', py: 1.25 }}
-                >
-                  로그아웃
-                </MenuItem>
-              </Menu>
-            </>
-          )}
+                </Menu>
+              </>
+            )}
+          </Box>
         </Box>
       </Toolbar>
     </AppBar>
