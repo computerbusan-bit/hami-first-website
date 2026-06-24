@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, Box,
-  Avatar, Menu, MenuItem, IconButton, useMediaQuery, useTheme
+  Avatar, Menu, MenuItem, useMediaQuery, useTheme,
 } from '@mui/material';
 import { FitnessCenterRounded, EditRounded, ExpandMoreRounded } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -25,27 +25,39 @@ const Navbar = () => {
       position="sticky"
       elevation={0}
       sx={{
-        bgcolor: 'rgba(13, 13, 13, 0.95)',
-        backdropFilter: 'blur(10px)',
+        bgcolor: 'rgba(10,10,10,0.96)',
+        backdropFilter: 'blur(12px)',
         borderBottom: '1px solid',
         borderColor: 'divider',
+        zIndex: 1100,
       }}
     >
-      <Toolbar sx={{ px: { xs: 2, sm: 3 }, minHeight: { xs: 56, sm: 64 } }}>
+      <Toolbar
+        sx={{
+          maxWidth: 1200,
+          width: '100%',
+          mx: 'auto',
+          px: { xs: 2, sm: 3, md: 4 },
+          minHeight: { xs: 56, sm: 64 },
+        }}
+      >
         {/* 로고 */}
         <Box
-          display="flex"
-          alignItems="center"
-          gap={1}
-          sx={{ cursor: 'pointer', flexShrink: 0 }}
+          display="flex" alignItems="center" gap={1}
+          sx={{ cursor: 'pointer', userSelect: 'none' }}
           onClick={() => navigate('/posts')}
         >
-          <FitnessCenterRounded sx={{ color: 'primary.main', fontSize: { xs: 22, sm: 26 } }} />
+          <FitnessCenterRounded
+            sx={{ color: 'primary.main', fontSize: { xs: 20, sm: 24 } }}
+          />
           <Typography
             fontWeight={900}
             color="primary"
-            letterSpacing={1}
-            sx={{ fontSize: { xs: '0.95rem', sm: '1.1rem' } }}
+            sx={{
+              fontSize: { xs: '0.9rem', sm: '1.05rem' },
+              letterSpacing: { xs: 1, sm: 2 },
+              lineHeight: 1,
+            }}
           >
             CROSSFIT GROUND
           </Typography>
@@ -53,12 +65,11 @@ const Navbar = () => {
 
         <Box flex={1} />
 
-        {/* 우측 메뉴 */}
-        <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 2 }}>
+        <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 1.5 }}>
           {!isMobile && (
             <Button
               onClick={() => navigate('/posts')}
-              sx={{ color: 'text.secondary', fontWeight: 500, fontSize: '0.9rem' }}
+              sx={{ color: 'text.secondary', fontWeight: 500, px: 1.5 }}
             >
               게시판
             </Button>
@@ -69,56 +80,82 @@ const Navbar = () => {
             color="primary"
             size="small"
             onClick={() => navigate('/posts/write')}
-            startIcon={!isMobile ? <EditRounded /> : undefined}
-            sx={{ minWidth: { xs: 36, sm: 'auto' }, px: { xs: 1, sm: 2 } }}
+            sx={{
+              fontWeight: 700,
+              px: { xs: 1.5, sm: 2 },
+              py: 0.75,
+              minWidth: 0,
+              fontSize: '0.82rem',
+            }}
           >
-            {isMobile ? <EditRounded fontSize="small" /> : '글쓰기'}
+            {isMobile ? <EditRounded sx={{ fontSize: 18 }} /> : '+ 글쓰기'}
           </Button>
 
           {user && (
             <>
               <Box
-                display="flex"
-                alignItems="center"
-                gap={0.75}
-                sx={{ cursor: 'pointer' }}
+                display="flex" alignItems="center" gap={0.75}
+                sx={{ cursor: 'pointer', pl: 0.5 }}
                 onClick={e => setAnchorEl(e.currentTarget)}
               >
                 <Avatar
                   sx={{
-                    width: { xs: 30, sm: 32 },
-                    height: { xs: 30, sm: 32 },
+                    width: { xs: 28, sm: 32 },
+                    height: { xs: 28, sm: 32 },
                     bgcolor: 'primary.main',
-                    fontSize: '0.8rem',
                     color: '#000',
-                    fontWeight: 700,
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
                   }}
                 >
                   {(profile?.name?.[0] || user.email?.[0])?.toUpperCase()}
                 </Avatar>
                 {!isMobile && (
-                  <>
-                    <Typography variant="body2" sx={{ maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <Box display="flex" alignItems="center" gap={0.25}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        maxWidth: 88,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        fontSize: '0.85rem',
+                        color: 'text.secondary',
+                      }}
+                    >
                       {profile?.name || user.email}
                     </Typography>
-                    <ExpandMoreRounded sx={{ fontSize: 16, color: 'text.secondary' }} />
-                  </>
+                    <ExpandMoreRounded sx={{ fontSize: 14, color: 'text.secondary' }} />
+                  </Box>
                 )}
               </Box>
+
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={() => setAnchorEl(null)}
-                PaperProps={{ sx: { mt: 1, minWidth: 140 } }}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    mt: 1.5,
+                    minWidth: 150,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                  },
+                }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
                 {isMobile && (
-                  <MenuItem disabled sx={{ fontSize: '0.82rem', color: 'text.secondary' }}>
+                  <MenuItem disabled sx={{ fontSize: '0.8rem', opacity: 0.6 }}>
                     {profile?.name || user.email}
                   </MenuItem>
                 )}
-                <MenuItem onClick={handleLogout} sx={{ color: 'error.main', fontSize: '0.9rem' }}>
+                <MenuItem
+                  onClick={handleLogout}
+                  sx={{ color: 'error.main', fontSize: '0.88rem', py: 1.25 }}
+                >
                   로그아웃
                 </MenuItem>
               </Menu>
