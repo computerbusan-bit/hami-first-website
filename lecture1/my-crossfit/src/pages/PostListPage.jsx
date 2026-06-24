@@ -30,14 +30,16 @@ const PostListPage = () => {
       .from('posts')
       .select(
         `id, title, created_at, view_count,
-         profiles!posts_author_id_fkey(name),
-         comments(count)`,
+         profiles(name),
+         comments!comments_post_id_fkey(count)`,
         { count: 'exact' }
       )
       .order('created_at', { ascending: false })
       .range(from, to);
 
-    if (!error) {
+    if (error) {
+      console.error('게시글 목록 조회 오류:', error);
+    } else {
       setPosts(data || []);
       setTotalCount(count || 0);
     }
