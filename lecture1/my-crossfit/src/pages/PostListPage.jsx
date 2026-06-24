@@ -64,19 +64,19 @@ const PostListPage = () => {
     >
       {/* 헤더 */}
       <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={{ xs: 2.5, sm: 3.5 }}
-        pb={{ xs: 2.5, sm: 3 }}
-        sx={{ borderBottom: '1px solid', borderColor: 'divider' }}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: { xs: 2.5, sm: 3.5 },
+          pb: { xs: 2.5, sm: 3 },
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
       >
         <Box>
-          <Typography
-            variant="h5"
-            fontWeight={700}
-            sx={{ fontSize: { xs: '1.15rem', sm: '1.35rem' }, mb: 0.4 }}
-          >
+          <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.15rem', sm: '1.35rem' }, mb: 0.4 }}>
             커뮤니티 게시판
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.82rem' }}>
