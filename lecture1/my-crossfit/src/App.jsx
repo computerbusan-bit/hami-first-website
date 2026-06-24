@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -49,7 +49,7 @@ const AppLayout = () => {
 
 const App = () => {
   return (
-    <BrowserRouter basename="/hami-first-website">
+    <BrowserRouter>
       <AuthProvider>
         <AppLayout />
       </AuthProvider>
