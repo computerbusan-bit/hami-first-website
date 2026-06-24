@@ -39,17 +39,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signUp = async (email, password, name, phone) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return { data, error };
-
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({ id: data.user.id, name, phone });
-      if (profileError) return { data, error: profileError };
-    }
-
-    return { data, error: null };
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name, phone } },
+    });
+    return { data, error };
   };
 
   const signOut = async () => {
