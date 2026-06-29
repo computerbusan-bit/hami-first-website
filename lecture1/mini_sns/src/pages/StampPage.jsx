@@ -153,7 +153,7 @@ const StampPage = () => {
         </Typography>
 
         {loading ? (
-          <Grid container spacing={1.5}>
+          <Grid container spacing={1.5} justifyContent="center">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <Grid item xs={4} key={i}>
                 <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 3 }} />
@@ -161,7 +161,7 @@ const StampPage = () => {
             ))}
           </Grid>
         ) : (
-          <Grid container spacing={1.5}>
+          <Grid container spacing={1.5} justifyContent="center">
             {places.map((place) => {
               const stamped = stamps.has(place.id)
               return (
@@ -214,7 +214,7 @@ const StampPage = () => {
                     )}
 
                     {/* 장소 이름 */}
-                    <Box sx={{ p: 0.8 }}>
+                    <Box sx={{ p: 0.8, textAlign: 'center' }}>
                       <Typography
                         variant="caption"
                         fontWeight={stamped ? 700 : 500}

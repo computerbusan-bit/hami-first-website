@@ -107,7 +107,7 @@ const PlacesPage = () => {
           총 {filtered.length}개의 장소
         </Typography>
 
-        <Grid container spacing={1.5}>
+        <Grid container spacing={1.5} justifyContent="center">
           {loading
             ? [1, 2, 3, 4].map((i) => (
               <Grid item xs={6} key={i}>
