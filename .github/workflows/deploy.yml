@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - 'lecture1/my-crossfit/**'
   workflow_dispatch:
 
 permissions:
