@@ -4,7 +4,6 @@ import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import IconButton from '@mui/material/IconButton'
@@ -18,6 +17,7 @@ import PlaceIcon from '@mui/icons-material/Place'
 
 const CATEGORIES = ['전체', '근대역사', '전통문화', '자연경관']
 
+const GAP = 12        // px, 카드 사이 간격
 const CARD_HEIGHT = 244
 const IMAGE_HEIGHT = 150
 
@@ -107,142 +107,122 @@ const PlacesPage = () => {
           총 {filtered.length}개의 장소
         </Typography>
 
-        <Grid container spacing={1.5} justifyContent="center">
+        {/* flexbox wrap으로 진짜 중앙정렬 */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: `${GAP}px`,
+            justifyContent: 'center',
+          }}
+        >
           {loading
             ? [1, 2, 3, 4].map((i) => (
-              <Grid item xs={6} key={i}>
-                <Skeleton variant="rectangular" height={CARD_HEIGHT} sx={{ borderRadius: 3 }} />
-              </Grid>
+              <Skeleton
+                key={i}
+                variant="rectangular"
+                sx={{
+                  width: `calc(50% - ${GAP / 2}px)`,
+                  height: CARD_HEIGHT,
+                  borderRadius: 3,
+                }}
+              />
             ))
             : filtered.map((place) => (
-              <Grid item xs={6} key={place.id}>
-                <Card
-                  onClick={() => navigate(`/places/${place.id}`)}
+              <Card
+                key={place.id}
+                onClick={() => navigate(`/places/${place.id}`)}
+                sx={{
+                  width: `calc(50% - ${GAP / 2}px)`,
+                  height: CARD_HEIGHT,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  flexShrink: 0,
+                }}
+              >
+                {/* 이미지 */}
+                <Box
                   sx={{
-                    cursor: 'pointer',
-                    height: CARD_HEIGHT,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    overflow: 'hidden',   /* 텍스트 카드 밖 이탈 방지 */
                     position: 'relative',
+                    height: IMAGE_HEIGHT,
+                    flexShrink: 0,
+                    bgcolor: 'grey.200',
                   }}
                 >
-                  {/* 이미지 영역 */}
                   <Box
+                    component="img"
+                    src={place.image_url}
+                    alt={place.name}
+                    sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+
+                  <IconButton
+                    onClick={(e) => toggleScrap(e, place.id)}
+                    size="small"
                     sx={{
-                      position: 'relative',
-                      height: IMAGE_HEIGHT,
-                      flexShrink: 0,
-                      bgcolor: 'grey.200',
+                      position: 'absolute', top: 6, right: 6,
+                      bgcolor: 'rgba(255,255,255,0.92)', p: 0.6,
+                      '&:hover': { bgcolor: '#fff' },
                     }}
                   >
-                    <Box
-                      component="img"
-                      src={place.image_url}
-                      alt={place.name}
-                      sx={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        display: 'block',
-                      }}
-                    />
+                    {scraps.has(place.id)
+                      ? <BookmarkIcon sx={{ fontSize: 17, color: 'primary.main' }} />
+                      : <BookmarkBorderIcon sx={{ fontSize: 17, color: 'text.secondary' }} />
+                    }
+                  </IconButton>
 
-                    {/* 스크랩 버튼 */}
-                    <IconButton
-                      onClick={(e) => toggleScrap(e, place.id)}
-                      size="small"
-                      sx={{
-                        position: 'absolute', top: 6, right: 6,
-                        bgcolor: 'rgba(255,255,255,0.92)',
-                        p: 0.6,
-                        '&:hover': { bgcolor: '#fff' },
-                      }}
-                    >
-                      {scraps.has(place.id)
-                        ? <BookmarkIcon sx={{ fontSize: 17, color: 'primary.main' }} />
-                        : <BookmarkBorderIcon sx={{ fontSize: 17, color: 'text.secondary' }} />
-                      }
-                    </IconButton>
-
-                    {/* 추천 뱃지 */}
-                    {place.is_featured && (
-                      <Box
-                        sx={{
-                          position: 'absolute', bottom: 6, left: 6,
-                          bgcolor: 'secondary.main', color: '#fff',
-                          borderRadius: 1.5, px: 0.8, py: 0.2,
-                          fontSize: '0.6rem', fontWeight: 700,
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        추천
-                      </Box>
-                    )}
-                  </Box>
-
-                  {/* 텍스트 영역 */}
-                  <CardContent
-                    sx={{
-                      p: 1.5,
-                      flex: 1,
-                      overflow: 'hidden',  /* 내부 텍스트 클리핑 */
-                      '&:last-child': { pb: 1.5 },
-                    }}
-                  >
-                    <Chip
-                      label={place.category}
-                      size="small"
-                      color="primary"
-                      variant="outlined"
-                      sx={{ height: 18, fontSize: '0.6rem', mb: 0.5 }}
-                    />
-
-                    {/* 장소명: minWidth:0 + noWrap으로 ellipsis 동작 보장 */}
-                    <Typography
-                      variant="body2"
-                      fontWeight={700}
-                      noWrap
-                      sx={{ mb: 0.5, minWidth: 0 }}
-                    >
-                      {place.name}
-                    </Typography>
-
+                  {place.is_featured && (
                     <Box
                       sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        minWidth: 0,
+                        position: 'absolute', bottom: 6, left: 6,
+                        bgcolor: 'secondary.main', color: '#fff',
+                        borderRadius: 1.5, px: 0.8, py: 0.2,
+                        fontSize: '0.6rem', fontWeight: 700, lineHeight: 1.4,
                       }}
                     >
-                      {/* 위치: flex:1 + minWidth:0으로 넘침 방지 */}
-                      <Box
-                        sx={{
-                          display: 'flex', alignItems: 'center', gap: 0.3,
-                          flex: 1, minWidth: 0, overflow: 'hidden',
-                        }}
-                      >
-                        <PlaceIcon sx={{ fontSize: 11, color: 'text.secondary', flexShrink: 0 }} />
-                        <Typography variant="caption" color="text.secondary" noWrap>
-                          {place.location}
-                        </Typography>
-                      </Box>
-
-                      {/* 좋아요: flexShrink:0으로 찌그러짐 방지 */}
-                      <Box
-                        sx={{ display: 'flex', alignItems: 'center', gap: 0.3, flexShrink: 0, ml: 0.5 }}
-                      >
-                        <FavoriteIcon sx={{ fontSize: 11, color: 'error.main' }} />
-                        <Typography variant="caption">{place.likes_count}</Typography>
-                      </Box>
+                      추천
                     </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
+                  )}
+                </Box>
+
+                {/* 텍스트 */}
+                <CardContent
+                  sx={{
+                    p: 1.5, flex: 1,
+                    overflow: 'hidden',
+                    '&:last-child': { pb: 1.5 },
+                  }}
+                >
+                  <Chip
+                    label={place.category}
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    sx={{ height: 18, fontSize: '0.6rem', mb: 0.5 }}
+                  />
+                  <Typography variant="body2" fontWeight={700} noWrap sx={{ mb: 0.5, minWidth: 0 }}>
+                    {place.name}
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: 0 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3, flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                      <PlaceIcon sx={{ fontSize: 11, color: 'text.secondary', flexShrink: 0 }} />
+                      <Typography variant="caption" color="text.secondary" noWrap>
+                        {place.location}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3, flexShrink: 0, ml: 0.5 }}>
+                      <FavoriteIcon sx={{ fontSize: 11, color: 'error.main' }} />
+                      <Typography variant="caption">{place.likes_count}</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
             ))
           }
-        </Grid>
+        </Box>
       </Box>
 
       <Snackbar

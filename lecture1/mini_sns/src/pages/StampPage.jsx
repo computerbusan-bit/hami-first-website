@@ -4,7 +4,6 @@ import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import Grid from '@mui/material/Grid'
 import LinearProgress from '@mui/material/LinearProgress'
 import Chip from '@mui/material/Chip'
 import Skeleton from '@mui/material/Skeleton'
@@ -152,84 +151,83 @@ const StampPage = () => {
           🗺️ 도장판
         </Typography>
 
-        {loading ? (
-          <Grid container spacing={1.5} justifyContent="center">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Grid item xs={4} key={i}>
-                <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 3 }} />
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          <Grid container spacing={1.5} justifyContent="center">
-            {places.map((place) => {
+        {/* flexbox wrap으로 진짜 중앙정렬 */}
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+          {loading
+            ? [1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton
+                key={i}
+                variant="rectangular"
+                sx={{ width: 'calc(33.333% - 7px)', height: 120, borderRadius: 3 }}
+              />
+            ))
+            : places.map((place) => {
               const stamped = stamps.has(place.id)
               return (
-                <Grid item xs={4} key={place.id}>
+                <Box
+                  key={place.id}
+                  onClick={() => navigate(`/places/${place.id}`)}
+                  sx={{
+                    width: 'calc(33.333% - 7px)',
+                    position: 'relative', cursor: 'pointer',
+                    borderRadius: 3, overflow: 'hidden',
+                    border: '2px solid',
+                    borderColor: stamped ? 'success.main' : 'rgba(0,0,0,0.1)',
+                    bgcolor: 'background.paper',
+                    transition: 'transform 0.15s',
+                    '&:active': { transform: 'scale(0.97)' },
+                  }}
+                >
+                  {/* 배경 이미지 */}
                   <Box
-                    onClick={() => navigate(`/places/${place.id}`)}
+                    component="img"
+                    src={place.image_url}
+                    alt={place.name}
                     sx={{
-                      position: 'relative', cursor: 'pointer',
-                      borderRadius: 3, overflow: 'hidden',
-                      border: stamped ? '2px solid' : '2px solid',
-                      borderColor: stamped ? 'success.main' : 'rgba(0,0,0,0.1)',
-                      bgcolor: 'background.paper',
-                      textAlign: 'center',
-                      transition: 'transform 0.15s',
-                      '&:active': { transform: 'scale(0.97)' },
+                      width: '100%', height: 80, objectFit: 'cover', display: 'block',
+                      filter: stamped ? 'none' : 'grayscale(100%) opacity(0.3)',
                     }}
-                  >
-                    {/* 배경 이미지 (흑백 or 컬러) */}
+                  />
+
+                  {/* 스탬프 오버레이 */}
+                  {stamped ? (
                     <Box
-                      component="img"
-                      src={place.image_url}
-                      alt={place.name}
                       sx={{
-                        width: '100%', height: 80, objectFit: 'cover',
-                        filter: stamped ? 'none' : 'grayscale(100%) opacity(0.3)',
+                        position: 'absolute', top: 4, right: 4,
+                        bgcolor: 'success.main', borderRadius: '50%',
+                        width: 24, height: 24,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}
-                    />
-
-                    {/* 스탬프 오버레이 */}
-                    {stamped ? (
-                      <Box
-                        sx={{
-                          position: 'absolute', top: 4, right: 4,
-                          bgcolor: 'success.main', borderRadius: '50%',
-                          width: 24, height: 24,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}
-                      >
-                        <VerifiedIcon sx={{ fontSize: 16, color: '#fff' }} />
-                      </Box>
-                    ) : (
-                      <Box
-                        sx={{
-                          position: 'absolute', inset: 0,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}
-                      >
-                        <LockIcon sx={{ fontSize: 28, color: 'rgba(0,0,0,0.2)' }} />
-                      </Box>
-                    )}
-
-                    {/* 장소 이름 */}
-                    <Box sx={{ p: 0.8, textAlign: 'center' }}>
-                      <Typography
-                        variant="caption"
-                        fontWeight={stamped ? 700 : 500}
-                        color={stamped ? 'success.main' : 'text.disabled'}
-                        sx={{ fontSize: '0.6rem', display: 'block', lineHeight: 1.3 }}
-                      >
-                        {STAMP_EMOJIS[place.name] || '📍'} {place.name}
-                      </Typography>
+                    >
+                      <VerifiedIcon sx={{ fontSize: 16, color: '#fff' }} />
                     </Box>
+                  ) : (
+                    <Box
+                      sx={{
+                        position: 'absolute', top: 0, left: 0, right: 0, height: 80,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >
+                      <LockIcon sx={{ fontSize: 28, color: 'rgba(0,0,0,0.2)' }} />
+                    </Box>
+                  )}
+
+                  {/* 장소 이름 */}
+                  <Box sx={{ p: 0.8, textAlign: 'center' }}>
+                    <Typography
+                      variant="caption"
+                      fontWeight={stamped ? 700 : 500}
+                      color={stamped ? 'success.main' : 'text.disabled'}
+                      sx={{ fontSize: '0.6rem', display: 'block', lineHeight: 1.3 }}
+                    >
+                      {STAMP_EMOJIS[place.name] || '📍'} {place.name}
+                    </Typography>
                   </Box>
-                </Grid>
+                </Box>
               )
-            })}
-          </Grid>
-        )}
+            })
+          }
+        </Box>
 
         {collected === total && total > 0 && (
           <Box
